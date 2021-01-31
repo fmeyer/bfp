@@ -1,11 +1,34 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8">
     <title>Hello wasm-pack!</title>
-  </head>
-  <body>
+</head>
+
+<body>
     <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
     <script src="./bootstrap.js"></script>
-  </body>
+
+    <div>
+        <form action="" method="get">
+            <label for="password"> Password</label>
+            <input type="text" class="form-control" id="password" value="fm_wasm_bfp" /> <br>
+            <label for="plaintext"> Input Message</label> <input type="text" class="form-control" id="plainText" value="SAMPLE MESSAGE" /> <br>
+            <label for="signature">Singed Message</label> <input readonly="true" class="form-control" type="text" size="90" id="signature"><br>
+            <input type="button" class="btn btn-primary" onclick="genKey()" value="Derive PBKDF2 Key and Sign Message(HMAC)">
+            <input type="button" class="btn btn-primary" onclick="verify()" value="Verify Message">
+
+            <br>
+            <label for="key">PBKDF2 Derived Key (Hex)</label>
+            <input class="form-control" readonly="true" size="90" type="text" id="key"><br>
+            <label for="salt"> Randow Salt (Hex) </label>
+            <input type="text" class="form-control" readonly="true" size="40" id="salt"><br>
+
+        </form>
+    </div>
+    <div>
+    </div>
+</body>
+
 </html>
