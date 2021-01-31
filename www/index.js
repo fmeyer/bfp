@@ -1,5 +1,4 @@
-import * as wasm from "bfp";
+import * as bfp from "bfp";
 
-wasm.init("fp");
-
-wasm.starts("loool");
+bfp.init("fm");
+bfp.list_media_devices();
