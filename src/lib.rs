@@ -1,17 +1,11 @@
 mod utils;
 
-use wasm_bindgen::{prelude::*,
-    JsCast};
+use wasm_bindgen::{prelude::*, JsCast};
 
+use argon2::{self, Config};
 use wasm_bindgen_futures::JsFuture;
 
-use web_sys::{
-    Document,
-    HtmlElement,
-    MediaDeviceInfo,
-    MediaStreamConstraints,
-    Navigator,
-    Window};
+use web_sys::{Document, HtmlElement, MediaDeviceInfo, MediaStreamConstraints, Navigator, Window};
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -20,7 +14,7 @@ use web_sys::{
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[wasm_bindgen]
-extern {
+extern "C" {
     fn alert(s: &str);
 }
 
@@ -55,25 +49,43 @@ pub fn get_navigator() -> Navigator {
 }
 
 #[wasm_bindgen]
+pub fn sample_hash() -> Result<js_sys::Array, JsValue> {
+    log!("{:#?}", 1);
+
+    let password = b"password";
+    let salt = b"randomsalt";
+    let config = Config::default();
+    let hash = argon2::hash_encoded(password, salt, &config).unwrap();
+    let _matches = argon2::verify_encoded(&hash, password).unwrap();
+    log!("{:#?}", 2);
+
+    let hashes = js_sys::Array::new();
+    hashes.push(&JsValue::from(hash));
+
+    log!("{:#?}", hashes);
+
+    Ok(hashes)
+}
+
+#[wasm_bindgen]
 pub async fn list_media_devices() -> Result<js_sys::Array, JsValue> {
     let media_devs = get_navigator().media_devices()?;
 
     let constraints = &mut MediaStreamConstraints::new();
     constraints.video(&JsValue::from(true));
     constraints.audio(&JsValue::from(true));
-  
-    // will request and wait for camera and audio 
-    let _a = media_devs.get_user_media_with_constraints(constraints)?; 
+
+    // will request and wait for camera and audio
+    let _a = media_devs.get_user_media_with_constraints(constraints)?;
 
     let devices = js_sys::Array::new();
     match media_devs.enumerate_devices() {
         Ok(devs) => {
-
             let media_device_info = JsFuture::from(devs).await?;
 
             let iterator = js_sys::try_iter(&media_device_info)?
                 .ok_or_else(|| {
-                    log!("{}", "Could not convert to iterator" );
+                    log!("{}", "Could not convert to iterator");
                 })
                 .expect("Unable to convert to array");
 
