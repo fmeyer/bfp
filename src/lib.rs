@@ -9,11 +9,16 @@ use wasm_bindgen::prelude::*;
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 #[wasm_bindgen]
-extern {
+extern "C" {
     fn alert(s: &str);
 }
 
 #[wasm_bindgen]
 pub fn init(s: &str) {
-    log!("{}{}", "Init logging : ", s);
+    log!("{}{}", "Init logging? : ", s);
+}
+
+#[wasm_bindgen]
+pub fn starts(s: &str) {
+    alert(s);
 }
